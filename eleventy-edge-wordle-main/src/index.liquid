@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Eleventy Edge Wordle</title>
+	<link rel="stylesheet" href="https://cdn.rawgit.com/kimeiga/bahunya/css/bahunya-0.1.3.css" />
+</head>
+<body>
+	<main>
+		<h1>Eleventy Edge Wordle</h1>
+
+		{% edge %}
+		{{ eleventy.edge.cookies.guesses | table: eleventy.edge.cookies.solution }}
+		
+		{% if eleventy.edge.cookies.state == "win" %}
+		<p>
+			<mark>Congrats!</mark>
+		</p>
+		{% elsif eleventy.edge.cookies.state == "loss" %}
+		<p>
+			<mark>Try again tomorrow!</mark>
+		</p>
+		{% else %}
+		<form action="{{ page.url }}" method="post">
+			<label for="guess">Guess a word:</label>
+			<input
+				type="text"
+				id="guess"
+				name="guess"
+				minlength="5"
+				maxlength="5"
+				pattern="[a-zA-Z]{5}"
+				title="Five-letter word"
+				required
+				autofocus
+			/>
+			<button type="submit">Guess</button>
+		</form>
+		{% endif %}
+		{{ eleventy.edge.cookies.guesses | usedKeys: eleventy.edge.cookies.solution }}
+		{% endedge %}
+
+		<p hidden id="wrong-desc">Not in word</p>
+		<p hidden id="out-of-place-desc">In the wrong place</p>
+		<p hidden id="correct-desc">Correct</p>
+		<p hidden id="unguessed-desc">Not guessed yet</p>
+
+		<style>
+			h1 {
+				font-size: 300%;
+				text-align: center;
+			}
+
+			form {
+				text-align: center;
+			}
+
+			table {
+				min-width: 40ch;
+				margin: auto;
+				margin-bottom: 2em;
+			}
+
+			table.keyboard {
+				text-align: center;
+			}
+
+			td {
+				text-transform: uppercase;
+				text-align: center;
+				font-weight: bold;
+				font-size: 150%;
+				position: relative;
+			}
+
+			table.keyboard td {
+				display: inline-block;
+				margin-right: 0.2em;
+				margin-bottom: 0.1em;
+				border: none;
+			}
+
+			table.keyboard {
+				transform: scale(0.75);
+				width: max-content;
+			}
+
+			[data-status="correct"] {
+				background-color: olivedrab;
+			}
+
+			[data-status]::before {
+				position: absolute;
+				top: 0;
+				right: 0.25em;
+				margin-top: -0.15em;
+				font-size: 75%;
+			}
+
+			[data-status="correct"]::before {
+				content: '✓';
+			}
+
+			[data-status="out-of-place"] {
+				background-color: #A98019;
+			}
+
+			[data-status="out-of-place"]::before {
+				content: '◑';
+			}
+
+			[data-row-status~="last"] {
+				animation: fadeIn 2s;
+			}
+
+			[data-status="unguessed"] {
+				background-color: #696969;
+			}
+
+			@keyframes fadeIn {
+				0% {opacity:0;}
+				100% {opacity:1;}
+			}
+			
+			[type="text"] {
+				text-transform: uppercase;
+			}
+
+			table + p {
+				text-align: center;
+			}
+
+			mark {
+				font-style: italic;
+				font-weight: bold;
+				font-size: 125%;
+				padding: 0.6% 0.9%;
+			}
+
+			.visually-hidden {
+				border: 0 !important;
+				clip: rect(1px, 1px, 1px, 1px) !important;
+				-webkit-clip-path: inset(50%) !important;
+				clip-path: inset(50%) !important;
+				height: 1px !important;
+				overflow: hidden !important;
+				margin: -1px !important;
+				padding: 0 !important;
+				position: absolute !important;
+				width: 1px !important;
+				white-space: nowrap !important;
+			}
+		</style>
+	</main>
+</body>
+</html>
